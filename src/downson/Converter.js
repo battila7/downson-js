@@ -5,7 +5,7 @@ const Literals = {
         empty: 'empty'
     },
     list: {
-        empty: 'list'
+        empty: 'empty'
     },
     boolean: {
         true: 'true',
@@ -20,10 +20,10 @@ const Literals = {
 };
 
 const Patterns = {
-    int: /[+-]?[1-9]([_,. ]?[0-9]+)*/,
-    float: /[+-]?[1-9]([_,. ]?[0-9]+)*([eE][+-]?[0-9]+)?/,
+    int: /[+-]?0|[1-9]([_,. ]?[0-9]+)*/,
+    float: /[+-]?0|[1-9]([_,. ]?[0-9]+)*([eE][+-]?[0-9]+)?/,
     exponentialSplit: /[eE]/,
-    grouping: /[_,. ]/
+    grouping: /[_,. ]/g
 };
 
 const success = value => ({ value });
@@ -78,7 +78,7 @@ function float(type, literal) {
         if (commas == 0 && dots == 0) {
             const str = intAndFracPart.replace(Patterns.grouping, '');
 
-            const res = str + (expPart ? ('E' + expPart) : '');
+            const res = str + (expPart ? ('e' + expPart) : '');
 
             const num = Number.parseFloat(res);
 
