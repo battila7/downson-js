@@ -46,15 +46,23 @@ const Types = {
     space: 'space'
 };
 
-function singleFlatten(arr) {
-    return arr.map(el => {
-        if (Array.isArray(el)) {
-            return el;
+// From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat
+function flatten(input) {
+    const stack = [...input];
+    const res = [];
+
+    while (stack.length) {
+        // pop value from stack
+        const next = stack.pop();
+        if (Array.isArray(next)) {
+            // push back array items, won't modify the original input
+            stack.push(...next);
         } else {
-            return [el];
+            res.push(next);
         }
-    })
-    .reduce((acc, curr) => acc.concat(curr), []);
+    }
+    //reverse to restore input order
+    return res.reverse();
 }
 
 const isLinkKeyMetadata = href => VALID_KEY_METADATA_HREFS.includes(href);
@@ -166,21 +174,21 @@ const Lexer = {
             const innerElements = token.inner.map(token => this.processToken(token));
     
             if (token.ordered) {
+                console.log(token);
                 return {
                     type: Types.list,
                     elements: innerElements
                 }
             } else {
-                return singleFlatten(innerElements.map(el => el.elements));
+                return flatten(innerElements.map(el => el.elements));
             }
         },
         [BlockTypes.listItemStart](token) {
-            const innerElements = singleFlatten(token.inner)
-                .map(token => this.processToken(token));
-    
+            const innerElements = flatten(token.inner).map(token => this.processToken(token));
+
             return {
                 type: Types.listItem,
-                elements: innerElements
+                elements: flatten(innerElements)
             };
         },
         [BlockTypes.table](token) {
@@ -215,7 +223,7 @@ const Lexer = {
     },
     processContext(context) {
         return {
-            elements: singleFlatten(context.elements.map(element => this.processToken(element))),
+            elements: flatten(context.elements.map(element => this.processToken(element))),
             childContexts: context.childContexts.map(context => this.processContext(context)),
             depth: context.depth,
             heading: context.heading ? this.processToken(context.heading) : null
