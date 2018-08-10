@@ -181,7 +181,7 @@ const Parser = {
 
             ctx.currentKey = null;
             ctx.currentLiteral = null;
-        } else if (ctx.currentObject && ctx.currentObject.isTopLevel || isNestingKeyedFromRight(ctx.currentObject)) {
+        } else if (ctx.currentObject && (ctx.currentObject.isTopLevel || isNestingKeyedFromRight(ctx.currentObject))) {
             ctx.nestingStack.push({
                 isTopLevel: false,
                 key: null,
@@ -190,8 +190,14 @@ const Parser = {
         } else {
             const obj = ctx.nestingStack.pop();
 
-            if (ctx.isOrderedList && ctx.nestingStack.length == 0) {
-                ctx.currentLiteral = obj.contents;
+            if (ctx.nestingStack.length == 0) {
+                if (ctx.isOrderedList) {
+                    ctx.currentLiteral = obj.contents;
+                } else {
+                    // spec: If a left-binding object key is detected witout a matching object terminator, 
+                    //       then the object key is ill-formed. However, already registered keys and values should remain intact.
+                    this.failures.push(interpretationError('Unbalanced object terminators.', ctx.element));
+                }
             } else {
                 ctx.nestingStack[ctx.nestingStack.length - 1].contents[obj.key] = obj.contents;
             }
@@ -226,13 +232,13 @@ const Parser = {
     parseObjectKey(ctx) {
         ctx.elements.pop();
 
-        if (ctx.elements.length > 1) {
+        if (ctx.elements.length > 0) {
             let nextElement = ctx.elements[ctx.elements.length - 1];
 
             if (nextElement.type == Types.text && nextElement.text.trim() == '') {
                 ctx.elements.pop();
 
-                if (ctx.elements.length > 1) {
+                if (ctx.elements.length > 0) {
                     nextElement = ctx.elements[ctx.elements.length - 1];
                 } else {
                     nextElement = null;
@@ -258,11 +264,17 @@ const Parser = {
                 } else {
                     if (nextElement.left) {
                         if (nextElement.object) {
-                            if (ctx.nestingStack.length > 1) {
+                            if (ctx.nestingStack.length > 0) {
                                 const obj = ctx.nestingStack.pop();
 
-                                if (ctx.isOrderedList && ctx.nestingStack.length == 0) {
-                                    ctx.currentLiteral = obj.contents;
+                                if (ctx.nestingStack.length == 0) {
+                                    if (ctx.isOrderedList) {
+                                        ctx.currentLiteral = obj.contents;
+                                    } else {
+                                        // spec: If a left-binding object key is detected witout a matching object terminator, 
+                                        //       then the object key is ill-formed. However, already registered keys and values should remain intact.
+                                        this.failures.push(interpretationError('Unbalanced object terminators.', ctx.element));
+                                    }
                                 } else {
                                     ctx.nestingStack[ctx.nestingStack.length - 1].contents[key] = obj.contents;
                                 }
