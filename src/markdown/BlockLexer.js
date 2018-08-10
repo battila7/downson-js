@@ -386,7 +386,7 @@ const BlockLexer = {
 
                 const isLevelOne = cap[2] == '=';
 
-                this.tokens.push({
+                tokens.push({
                     type: Types.heading,
                     depth: isLevelOne ? 1 : 2,
                     text: cap[1]
