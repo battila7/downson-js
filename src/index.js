@@ -33,6 +33,12 @@ function processAsDownson(markdown) {
     };
 }
 
+/**
+ * Parses the specified Markdown input and returns the extracted data layer and the list of failures.
+ * @param {string} input the Markdown input to process
+ * @param {object} options options to fine-tune the parsing/data extraction process
+ * @returns {object} the data layer and the failures
+ */
 function downson(input, options = { marked: {} }) {
     if (typeof input === 'undefined' || input === null) {
         throw new Error('downson(): input parameter is undefined or null');
@@ -59,6 +65,10 @@ function downson(input, options = { marked: {} }) {
     }
 }
 
+/**
+ * Returns the factory default settings of downson.
+ * @returns {object} the factory defaults
+ */
 downson.getFactoryDefaults = function getFactoryDefaults() {
     return {
         marked: {
@@ -82,8 +92,16 @@ downson.getFactoryDefaults = function getFactoryDefaults() {
     };
 }
 
+/**
+ * The default options of the library. Can be modified if desired.
+ */
 downson.defaultOptions = downson.getFactoryDefaults();
 
+/**
+ * Registers a new custom primitive type.
+ * @param {string} type the name of the type
+ * @param {function} converterMethod the converter method, which converts a literal to a value
+ */
 downson.registerType = function registerType(type, converterMethod) {
     if (typeof type === 'undefined' || type === null || converterMethod === 'undefined' || converterMethod === null) {
         throw new Error('registerType(): type or converterMethod is undefined/null.');
@@ -102,6 +120,11 @@ downson.registerType = function registerType(type, converterMethod) {
     Converter.register(type, converterMethod);
 };
 
+/**
+ * Deregisters the specified custom primitive type.
+ * @param {string} type the name of the type
+ * @returns {boolean} true if the specified type has been deregistered, false otherwise
+ */
 downson.deregisterType = function deregisterType(type) {
     if (typeof type === 'undefined' || type === null) {
         throw new Error('deregisterType(): type is undefined/null.');
