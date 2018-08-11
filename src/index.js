@@ -61,7 +61,11 @@ function downson(input, options = { downson: {}, marked: {} }) {
         e.message += '\nPlease report this to https://github.com/battila7/downson-js.';
 
         if ((options || downson.defaultOptions).silent) {
-            return {};
+            return {
+                data: {},
+                failures: [],
+                hasInterpretationsErrors: false
+            };
         }
 
         throw e;
