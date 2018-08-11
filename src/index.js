@@ -39,7 +39,7 @@ function processAsDownson(markdown) {
  * @param {object} options options to fine-tune the parsing/data extraction process
  * @returns {object} the data layer and the failures
  */
-function downson(input, options = { marked: {} }) {
+function downson(input, options = { downson: {}, marked: {} }) {
     if (typeof input === 'undefined' || input === null) {
         throw new Error('downson(): input parameter is undefined or null');
     }
@@ -49,7 +49,10 @@ function downson(input, options = { marked: {} }) {
     }
 
     try {
-        const markedOptions = Object.assign({}, downson.defaultOptions.marked || {}, options.marked);
+        // Unused as of now
+        const downsonOptions = Object.assign({}, downson.defaultOptions.downson , options.downson);
+
+        const markedOptions = Object.assign({}, downson.defaultOptions.marked, options.marked);
 
         const markdown = marked(input, markedOptions);
 
@@ -71,6 +74,7 @@ function downson(input, options = { marked: {} }) {
  */
 downson.getFactoryDefaults = function getFactoryDefaults() {
     return {
+        downson: {},
         marked: {
             baseUrl: null,
             breaks: false,
