@@ -174,7 +174,6 @@ const Lexer = {
             const innerElements = token.inner.map(token => this.processToken(token));
     
             if (token.ordered) {
-                console.log(token);
                 return {
                     type: Types.list,
                     elements: innerElements
