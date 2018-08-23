@@ -29,7 +29,7 @@ The function returns an `object` with the following properties:
       * `reason: string` - The reason that caused the failure.
       * `token: object` - The violating token.
       * `type: string` - Can be `ambiguousSyntax` or `interpretationError`.
-  * `hasInterpretationsErrors: boolean` - Whether the `failures` array includes any objects with `interpretationError` type.
+  * `hasInterpretationErrors: boolean` - Whether the `failures` array includes any objects with `interpretationError` type.
 
 If `options.silent` is set to true and a fatal error occurs, then the following value is returned:
 
@@ -37,7 +37,7 @@ If `options.silent` is set to true and a fatal error occurs, then the following 
 {
     data: {},
     failures: [],
-    hasInterpretationsErrors: false
+    hasInterpretationErrors: false
 }
 ~~~~
 

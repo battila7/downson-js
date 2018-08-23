@@ -29,7 +29,7 @@ function processAsDownson(markdown) {
     return {
         data,
         failures,
-        hasInterpretationsErrors: failures.some(element => element.type == Failure.Types.interpretationError)
+        hasInterpretationErrors: failures.some(element => element.type == Failure.Types.interpretationError)
     };
 }
 
@@ -64,7 +64,7 @@ function downson(input, options = { downson: {}, marked: {} }) {
             return {
                 data: {},
                 failures: [],
-                hasInterpretationsErrors: false
+                hasInterpretationErrors: false
             };
         }
 
