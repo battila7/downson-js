@@ -2,7 +2,7 @@
   "name": "downson",
   "description": "A downson parser.",
   "author": "Attila Bagossy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "./lib/index.js",
   "repository": "git://github.com/battila7/downson-js.git",
   "bugs": {
