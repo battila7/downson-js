@@ -207,7 +207,7 @@ const Parser = {
     },
     parsePrimitiveLiteral(ctx) {
         // Unknown types already checked by Lexer.
-        const { value, error } = Converter.tryConvert(ctx.element.typeHint, ctx.element.valueOverride || ctx.element.literal);
+        const { value, error } = Converter.tryConvert(ctx.element.typeHint, ctx.element.valueOverride || ctx.element.literal, ctx.element.parameters);
 
         if (!error) {
             if (ctx.currentLiteral) {

@@ -142,9 +142,9 @@ const Converter = {
     deregister(type) {
         return this.methodMap.delete(type);
     },
-    tryConvert(type, literal) {
+    tryConvert(type, literal, parameters) {
         if (this.methodMap.has(type)) {
-            return this.methodMap.get(type)(type, literal);
+            return this.methodMap.get(type)(type, literal, parameters);
         } else {
             return failure(`Missing converter for type "${type}"!`);
         }

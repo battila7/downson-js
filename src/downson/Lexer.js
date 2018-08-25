@@ -11,6 +11,9 @@ const KEY_METADATA_SEPARATOR = ':';
 
 const KEY_NAME_STARTER = '.';
 
+const TYPE_FRAGMENT_SEPARATOR = ':'
+const TYPE_PARAMETER_SEPARATOR = '=';
+
 const Metadata = {
     left: 'left',
     right: 'right',
@@ -128,17 +131,37 @@ const Lexer = {
                             return this.processors.noise();
                         }
 
+                        if (!token.data.href) {
+                            return this.processors.noise();
+                        }
+
+                        const typeFragments = token.data.href.split(TYPE_FRAGMENT_SEPARATOR);
+                        const typeHint = typeFragments.shift();
+
                         // spec: If the type hint describes an unknown type, then the primitive literal is ill-formed.
-                        if (!Converter.isKnownType(token.data.href)) {
-                            this.failures.push(ambiguousSyntax(`Unknown primitive type "${token.data.href}".`, token));
+                        if (!Converter.isKnownType(typeHint)) {
+                            this.failures.push(ambiguousSyntax(`Unknown primitive type "${typeHint}".`, token));
 
                             return this.processors.noise();
                         }
 
+                        const pairs = typeFragments.map(f => f.split(TYPE_PARAMETER_SEPARATOR)).filter(arr => arr.length == 2);
+
+                        if (pairs.length != typeFragments.length) {
+                            this.failures.push(ambiguousSyntax(`Ill-formed type parameters: ${typeFragments}".`, token));
+
+                            return this.processors.noise();
+                        }
+
+                        const parameters = Object.create(null);
+
+                        pairs.forEach(([ key, value ]) => parameters[key] = value);
+
                         return {
                             type: Types.primitiveLiteral,
                             literal: token.data.cap[1],
-                            typeHint: token.data.href,
+                            typeHint,
+                            parameters,
                             valueOverride: token.data.title
                         };
                     }
